@@ -4,12 +4,11 @@ const postUrl = '?limit=200&includeRelated=true&useCanonical=false&includeTags=f
 var word;
 
 function full(word) {
-
     return Promise.all([
-        unirest.def(word),
-        unirest.syn(word),
-        unirest.ant(word),
-        unirest.ex(word)
+        unirest.def(word, 'print'),
+        unirest.syn(word, 'print'),
+        unirest.ant(word, 'print'),
+        unirest.ex(word, 'print')
     ]);
 }
 exports.fullWord = function (word) {

@@ -1,21 +1,21 @@
 'use strict';
 
-const args = (process.argv.slice(2));
-
-const func = args[0].split(':')[0]
-const word = args[0].split(':')[1]
+const args = (process.argv[2]);
+const params = args.split(':')
+const func = args.split(':')[0]
+const word = args.split(':')[1]
 const unirest = require('./unirest');
 const fullWord = require('./fullWord')
 
 
 
 
-if (args[0] === ':') {
-    unirest.wordOfTheDay();
-} else if (args.length === 1) {
-    fullWord.fullWord(func)
+if (func && word) {
+    unirest[func](word, 'print')
 } else if (func === 'dict') {
     fullWord.fullWord(word)
+} else if (!(word) && (func)) {
+    fullWord.fullWord(func)
 } else {
-    unirest[func](word)
+    unirest.wordOfTheDay();
 }

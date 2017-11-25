@@ -2,4 +2,4 @@
 echo "First arg: $1"
 args=("$1":"$2")
 echo "Second arg: $2"
-node debug app.js $args
+node debug  app.js $args

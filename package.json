@@ -17,7 +17,9 @@
   },
   "homepage": "https://github.com/mayank2567/dict#readme",
   "dependencies": {
+    "chalk": "^2.3.0",
     "inquirer": "^4.0.0",
+    "observe": "^1.4.1",
     "unirest": "^0.5.1"
   }
 }
