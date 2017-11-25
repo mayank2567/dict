@@ -1,0 +1,23 @@
+{
+  "name": "dict",
+  "version": "1.0.0",
+  "description": "Create a command line dictionary tool using wordnik (http://wordnik.com) api.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mayank2567/dict.git"
+  },
+  "author": "Mayank",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mayank2567/dict/issues"
+  },
+  "homepage": "https://github.com/mayank2567/dict#readme",
+  "dependencies": {
+    "inquirer": "^4.0.0",
+    "unirest": "^0.5.1"
+  }
+}
