@@ -4,6 +4,7 @@ const baseUrl = 'http://api.wordnik.com:80/v4/';
 const postUrl = '?limit=200&includeRelated=true&useCanonical=false&includeTags=false&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5'
 const fullWord = require('./fullWord')
 var output = [];
+const wordscramble = require('wordscramble');
 
 var inquirer = require('inquirer');
 
@@ -26,9 +27,10 @@ exports.def = function (word, command) {
                     console.log(`${i + 1}:${response.body[i].text}`);
                 }
             } else {
-                debugger
-                info.emit('def', response.body[0].text);
-                res.def = response.body[0].text
+
+                var index = Math.floor(Math.random() * (response.body.length))
+                info.emit('def', response.body[index].text);
+                // res.def = response.body[0].text
             }
         });
 }
@@ -54,6 +56,7 @@ exports.syn = function (word, command) {
                 for (let i = 0; i < response.body.length; i++) {
                     if (response.body[i].relationshipType === 'synonym') {
                         res.syn = response.body[i].words
+                        debugger
                     }
                 }
 
@@ -61,13 +64,13 @@ exports.syn = function (word, command) {
                 for (let i = 0; i < response.body.length; i++) {
                     if (response.body[i].relationshipType === 'synonym') {
                         debugger
-
-                        info.emit('syn', response.body[i].words[0]);
+                        var index = Math.floor(Math.random() * (response.body[i].words.length))
+                        info.emit('syn', response.body[i].words[index]);
 
                         return
                     }
                 }
-                exports.def(word)
+                exports.jumble(word)
             }
 
         });
@@ -93,7 +96,7 @@ exports.ant = function (word, command) {
             } else if (command === 'all') {
                 for (let i = 0; i < response.body.length; i++) {
                     if (response.body[i].relationshipType === 'antonym') {
-                        res.syn = response.body[i].words
+                        res.ant = response.body[i].words
                     }
                 }
 
@@ -101,17 +104,25 @@ exports.ant = function (word, command) {
                 for (let i = 0; i < response.body.length; i++) {
                     if (response.body[i].relationshipType === 'antonym') {
                         debugger
-
-                        info.emit('ant', response.body[i].words[0]);
+                        var index = Math.floor(Math.random() * (response.body[i].words.length))
+                        info.emit('ant', response.body[i].words[index]);
                         return
 
                     }
                 }
-                exports.def(word)
+                exports.jumble(word)
             }
 
         });
 }
+
+exports.jumble = function (word) {
+
+    debugger
+    info.emit('jumble', wordscramble.scramble(word));
+
+}
+
 
 exports.ex = function (word, command) {
     url = `${baseUrl}word.json/${word}/examples${postUrl}`
@@ -154,16 +165,17 @@ exports.wordOfTheDay = function () {
 getAll = function (word) {
 
     func = [
+        exports.jumble,
         exports.def,
         exports.syn,
         exports.ant
     ]
-    var index = Math.floor(Math.random() * (3))
+    var index = Math.floor(Math.random() * (4))
     func[index](word)
     debugger
 }
 
-function getRandomWord(call) {
+exports.getRandomWord = function () {
     var url = `${baseUrl}words.json/randomWord?hasDictionaryDef=false&minCorpusCount=0&maxCorpusCount=-1&minDictionaryCount=1&maxDictionaryCount=-1&minLength=5&maxLength=-1&api_key=a2a73e7b926c924fad7001ca3111acd55af2ffabf50eb4ae5`;
     unirest.get(url)
         .headers({
@@ -173,54 +185,68 @@ function getRandomWord(call) {
             word = response.body.word;
             getAll(word)
             welcome();
-            call();
+            exports.syn(word, 'all');
+            ask();
         });
 };
 
 function welcome() {
-    console.log('Welcome to the game!!!\n')
+    console.log(Chalk.blue('Welcome to the game!!!\n'));
 }
 
 function ask() {
     info.on('def', function (def) {
         console.log('Definition of the word is ', chalk.red(def));
-        game();
+        startGame();
     });
 
     info.on('ant', function (ant) {
         console.log('Antonym of the word is ', chalk.red(ant));
-        game();
+        startGame();
     });
 
     info.on('syn', function (syn) {
         console.log('Synonym of the word is ', chalk.red(syn));
-        game();
+        startGame();
+    });
+
+    info.on('jumble', function (jumble) {
+        console.log('Jumbled word is ', chalk.red(jumble));
+        startGame();
     });
 
 
 }
 
-function game() {
+function startGame() {
     inquirer.prompt(questions).then(answers => {
-        output.push(answers.word);
-        if (answers.askAgain) {
-            ask();
-        } else {
-            console.log('Your favorite TV Shows:', output.join(', '));
+
+        if (answers.word == word || (res.syn && res.syn.indexof(answers.word) != -1)) {
+            console.log(chalk.red("\n\nYOU WON\n\n"))
+        } else if (answers.word == 1) {
+            startGame();
+        } else if (answers.word == 2) {
+            getAll(word);
+        } else if ((answers.word == 3)) {
+            fullWord.fullWord(word);
+            console.log(chalk.red("\n\nYOU QUIT\n\n"))
         }
     });
 }
+
+var hints = [{
+    type: 'input',
+    name: 'hint',
+    message: '\n1.Try Again\n2.Get Hint\n3.Quit',
+    default: true
+}]
+
+
 var questions = [{
         type: 'input',
         name: 'word',
-        message: "Guess the word...."
-    },
-    {
-        type: 'confirm',
-        name: 'askAgain',
-        message: 'Want to enter another TV show favorite (just hit enter for YES)?',
-        default: true
+        message: "\n\nGuess the word.... or \n1.Try Again\n2.Get Hint\n3.Quit\n"
     }
-];
 
-getRandomWord(ask)
+
+];

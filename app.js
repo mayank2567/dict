@@ -8,9 +8,9 @@ const unirest = require('./unirest');
 const fullWord = require('./fullWord')
 
 
-
-
-if (func && word) {
+if (func == 'play') {
+    unirest.getRandomWord()
+} else if (func && word) {
     unirest[func](word, 'print')
 } else if (func === 'dict') {
     fullWord.fullWord(word)

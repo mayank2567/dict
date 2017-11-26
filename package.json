@@ -20,6 +20,7 @@
     "chalk": "^2.3.0",
     "inquirer": "^4.0.0",
     "observe": "^1.4.1",
-    "unirest": "^0.5.1"
+    "unirest": "^0.5.1",
+    "wordscramble": "^5.1.21"
   }
 }
