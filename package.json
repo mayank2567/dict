@@ -8,9 +8,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mayank2567/dict.git"
+    "url": "https://github.com/mayank2567/dict.git"
   },
-  "author": "Mayank",
+  "author": "mayank2567",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/mayank2567/dict/issues"
